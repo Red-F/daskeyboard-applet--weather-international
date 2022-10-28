@@ -31,35 +31,50 @@ class Period {
 }
 
 Period.revive = function (json) {
-  const meta = json['$'];
+  var next = json.data.next_1_hours;
+  if (next === undefined) {
+    next = json.data.next_6_hours;
+  }
+  if (next === undefined) {
+    next = json.data.next_12_hours;
+  }
+  var details = json.data.instant.details;
   return new Period({
-    from: meta.from,
-    to: meta.to,
-    number: meta.period,
-
-    symbol: json.symbol[0]['$'],
-    precipitation: json.precipitation[0]['$'],
-    windDirection: json.windDirection[0]['$'],
-    windSpeed: json.windSpeed[0]['$'],
-    temperature: json.temperature[0]['$'],
-    pressure: json.pressure[0]['$'],
+    from: new Date(json.time),
+    to: new Date(from.getTime() + 60 * 60 * 1000),
+    symbol: next.summary.symbol_code,
+    precipitation: next.precipitation_amount,
+    windDirection: details.wind_from_direction,
+    windSpeed: details.wind_speed,
+    temperature: details.air_temperature,
+    pressure: details.air_pressure_at_sea_level
   });
 }
 
-
+/**
+ * Represents a day's worth of forecasts
+ */
+class Day {
+  constructor(date, periods) {
+    this.date = date;
+    this.periods = periods;
+  }
+}
 
 /**
  * Process raw JSON forecast data into Days and Periods
  * @param {String} data 
  */
 function processForecast(data) {
-  const periods = data.weatherdata.forecast[0].tabular[0].time;
+  const periods = data.properties.timeseries;
   const days = [];
-  let currentDate = '';
+  let currentNumber = 1;
+  let currentDate = 0;
   let thisDay = null;
-  for (periodJson of periods) {
+  for (const periodJson of periods) {
     let period = Period.revive(periodJson);
-    let thisDate = period.from.split('T')[0];
+    period.number = currentNumber++;
+    let thisDate = period.from.getDate();
     if (thisDate !== currentDate) {
       currentDate = thisDate;
       if (thisDay) {
@@ -73,6 +88,8 @@ function processForecast(data) {
     if (thisDay && thisDay.length) {
       days.push(thisDay)
     }
+
+    if (days.length >= 5) break;
   }
 
   return days;
@@ -100,11 +117,10 @@ var windSpeed = details.wind_speed;
 var temperature = details.air_temperature;
 var pressure = details.air_pressure_at_sea_level;
 
+var p = Period.revive(aPeriod);
 
-const days = [];
-for (const period of periods) {
+var d = processForecast(data);
 
-}
 var ts = new Date(periods[0].time);
 console.log(ts);
 console.log(ts.getTimezoneOffset());
