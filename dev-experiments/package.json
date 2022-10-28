@@ -1,0 +1,11 @@
+{
+  "name": "dev-experiments",
+  "version": "1.0.0",
+  "description": "some testing stuff for yr.no",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "got": "^12.5.2"
+  }
+}
