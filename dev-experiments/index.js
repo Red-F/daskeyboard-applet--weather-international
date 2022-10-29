@@ -2,6 +2,15 @@ import got from 'got';
 
 
 /**
+ * Retrieve forecast JSON from the service
+ * @param {String} forecastUrl 
+ */
+async function retrieveForecast(forecastUrl) {
+  console.log("Getting forecast via URL: " + forecastUrl);
+  return await got(forecastUrl).json();
+}
+
+/**
  * Represents a single forecast period within a day
  */
 class Period {
@@ -43,7 +52,7 @@ Period.revive = function (json) {
     from: new Date(json.time),
     to: new Date(from.getTime() + 60 * 60 * 1000),
     symbol: next.summary.symbol_code,
-    precipitation: next.precipitation_amount,
+    precipitation: next.details.precipitation_amount,
     windDirection: details.wind_from_direction,
     windSpeed: details.wind_speed,
     temperature: details.air_temperature,
@@ -95,12 +104,28 @@ function processForecast(data) {
   return days;
 }
 
+/**
+ * Choose the most relevant forecast period within a day.
+ * @param {Day} day 
+ */
+function choosePeriod(day) {
+  const selectedPeriods = [];
+  const useEvening = day.periods[0].from.getHours() > 17;
+  for (const period of day.periods) {
+    // try to limit to 07.00 .. 18.00 hours
+    if (period.from.getHours() < 7) continue;
+    if (period.from.getHours() > 17 && !useEvening) break;
+    selectedPeriods.push(period);
+  }
+  // return the period with more precipitation
+  return selectedPeriods.reduce((prev, current) => { return prev.precipitation > current.precipitation ? prev : current; });
+}
+
 
 
 console.log('about to call api');
 
-// const data = await got('https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=52.060669&lon=4.494025').json();
-const data = await got('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=52.060669&lon=4.494025').json();
+const data = await retrieveForecast('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=52.060669&lon=4.494025');
 
 var properties = data.properties;
 const periods = properties.timeseries;
@@ -120,6 +145,8 @@ var pressure = details.air_pressure_at_sea_level;
 var p = Period.revive(aPeriod);
 
 var d = processForecast(data);
+
+const precipitations = d.map(d => choosePeriod(d));
 
 var ts = new Date(periods[0].time);
 console.log(ts);
