@@ -40,14 +40,14 @@ class Period {
 }
 
 Period.revive = function (json) {
-  var next = json.data.next_1_hours;
+  let next = json.data.next_1_hours;
   if (next === undefined) {
     next = json.data.next_6_hours;
   }
   if (next === undefined) {
     next = json.data.next_12_hours;
   }
-  var details = json.data.instant.details;
+  const details = json.data.instant.details;
   return new Period({
     from: new Date(json.time),
     to: new Date(from.getTime() + 60 * 60 * 1000),
@@ -117,7 +117,7 @@ function choosePeriod(day) {
     if (period.from.getHours() > 17 && !useEvening) break;
     selectedPeriods.push(period);
   }
-  // return the period with more precipitation
+  // return the period with most precipitation
   return selectedPeriods.reduce((prev, current) => { return prev.precipitation > current.precipitation ? prev : current; });
 }
 
