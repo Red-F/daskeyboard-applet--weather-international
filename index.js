@@ -157,7 +157,7 @@ function processForecast(data) {
       if (thisDay) {
         days.push(thisDay);
       }
-      thisDay = new Day(thisDate, [period]);
+      thisDay = new Day(period.from, [period]);
     } else {
       thisDay.periods.push(period);
     }
@@ -198,9 +198,9 @@ const periodNameMap = {
 
 function generatePeriodText(period, units) {
   const temperature = (units == Units.imperial) ?
-    Math.round(period.temperature.value * 1.8 + 32) + '°F' :
-    period.temperature.value + '°C';
-  return `${periodNameMap[period.number]}: ${period.symbol.name}, ${temperature}`;
+    Math.round(period.temperature * 1.8 + 32) + '°F' :
+    period.temperature + '°C';
+  return `${period.from.getHours().toString().padStart(2, '0')}:00 ${period.symbol}, ${temperature}`;
 }
 
 /**
@@ -208,7 +208,7 @@ function generatePeriodText(period, units) {
  * @param {Period} period 
  */
 function chooseColor(period) {
-  const text = period.symbol.name.toLowerCase();
+  const text = period.symbol.toLowerCase();
   if (text.includes('snow')) {
     return Colors.SNOW;
   } else if (text.includes('storm')) {
@@ -261,7 +261,7 @@ class WeatherForecast extends q.DesktopApp {
     const messages = [];
 
     for (let day of days) {
-      const dateMessage = `<div style="color: red;"><strong>${moment(day.date).format('dddd, MMMM Do')}:</strong></div>`;
+      const dateMessage = `<div style="color: red;"><strong>${day.date.toString()}:</strong></div>`;
       messages.push(dateMessage);
       messages.push(`<div>`);
       day.periods.forEach((period, index) => {
