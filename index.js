@@ -1,6 +1,5 @@
 const got = require('got');
 const fs = require('fs');
-const moment = require('moment');
 const readline = require('readline');
 const q = require('daskeyboard-applet');
 const logger = q.logger;
@@ -77,7 +76,7 @@ function processCities(lines) {
  * @param {String} forecastUrl 
  */
 async function retrieveForecast(forecastUrl) {
-  console.log("Getting forecast via URL: " + forecastUrl);
+  logger.info("Getting forecast via URL: " + forecastUrl);
   return await got(forecastUrl).json();
 }
 
@@ -186,14 +185,9 @@ function choosePeriod(day) {
     selectedPeriods.push(period);
   }
   // return the period with most precipitation
-  return selectedPeriods.reduce((prev, current) => { return prev.precipitation > current.precipitation ? prev : current; });
-}
-
-const periodNameMap = {
-  '0': 'Overnight',
-  '1': 'Morning',
-  '2': 'Afternoon',
-  '3': 'Evening',
+  const rc = selectedPeriods.reduce((prev, current) => { return prev.precipitation > current.precipitation ? prev : current; });
+  logger.info(`${rc.from.getDate()}-${rc.from.getMonth()+1}-${rc.from.getFullYear()}: ${rc.symbol}`);
+  return rc;
 }
 
 function generatePeriodText(period, units) {
