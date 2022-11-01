@@ -24,3 +24,10 @@
 ^([^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t\d+\t)([-.\d]+)\t([-.\d]+)\t(.*)http://[^\t]+$
 $1$2\t$3\t$4https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=$2&lon=$3
 
+\thttp://www.yr.no/[^\t]+/[^\t]+/([^\t]+)/[^\t]+/forecast.xml$
+
+^([^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t\d+\t)([-.\d]+)\t([-.\d]+)\t(.*)http://[^\t]+\thttp://[^\t]+\t([^\t]+)$
+$1$2\t$3\t$4$5\thttps://api.met.no/weatherapi/locationforecast/2.0/compact?lat=$2&lon=$3
+
+^(\t|[^\t]+\t){16}[^\t]+$
+

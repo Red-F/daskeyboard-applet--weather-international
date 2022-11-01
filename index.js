@@ -60,11 +60,10 @@ function processCities(lines) {
   const options = [];
   for (line of lines) {
     const values = line.split("\t");
-    const url = values[17].trim() || values[16].trim() || values[15].trim();
-    const urlParts = url.split('//')[1].split('/');
+    const url = values[16].trim();
     options.push({
       key: url,
-      value: `${values[3]}, ${urlParts[3].replace(/_/g, ' ')} (${values[10]})`,
+      value: `${values[3]}, ${values[15].replace(/_/g, ' ')} (${values[10]})`,
     })
   }
 
