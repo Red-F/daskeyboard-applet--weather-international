@@ -1,4 +1,6 @@
 import got from 'got';
+import readline from 'readline';
+import fs from 'fs';
 
 
 /**
@@ -121,7 +123,55 @@ function choosePeriod(day) {
   return selectedPeriods.reduce((prev, current) => { return prev.precipitation > current.precipitation ? prev : current; });
 }
 
+/**
+ * Loads the weather cities from an installed text file
+ */
+ async function loadCities() {
+  console.log(`Retrieving cities...`);
 
+  return new Promise((resolve, reject) => {
+    const lines = [];
+
+    const reader = readline.createInterface({
+      input: fs.createReadStream('cities.txt'),
+      crlfDelay: Infinity
+    });
+
+    reader.on('line', (line) => {
+      lines.push(line);
+    });
+
+    reader.on('close', () => {
+      // remove duplicates, ignoring the header on first line
+      const dedupe = lines.slice(1).sort().filter((line, i, allLines) => {
+        return (i == 0 || allLines[i - 1] != line);
+      });
+      resolve(dedupe);
+    });
+
+    reader.on('error', error => {
+      reject(error);
+    })
+  })
+}
+
+/**
+ * Process a list of zones into a list of options
+ * @param {Array<*>} lines 
+ */
+function processCities(lines) {
+  const options = [];
+  for (const line of lines) {
+    const values = line.split("\t");
+    const url = values[16].trim();
+    options.push({
+      key: url,
+      value: `${values[3]}, ${values[15].replace(/_/g, ' ')} (${values[10]})`,
+    })
+  }
+
+  return options;
+}
 
 console.log('about to call api');
 
@@ -151,6 +201,9 @@ const precipitations = d.map(d => choosePeriod(d));
 var ts = new Date(periods[0].time);
 console.log(ts);
 console.log(ts.getTimezoneOffset());
+
+const cities = await loadCities();
+const options = processCities(cities);
 
 
 //=> {"hello": "world"}

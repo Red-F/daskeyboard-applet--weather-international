@@ -58,7 +58,7 @@ async function loadCities() {
  */
 function processCities(lines) {
   const options = [];
-  for (line of lines) {
+  for (const line of lines) {
     const values = line.split("\t");
     const url = values[16].trim();
     options.push({
