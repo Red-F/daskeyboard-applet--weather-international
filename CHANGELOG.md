@@ -1,5 +1,9 @@
 # Changelog Q Applet Weather Forecast
 
+## Version 2.1.0 - November 3, 2022
+
+Re-factored to use the new JSON based api at yr.no instead of the deprecated XML api
+
 ## Version 2.0.4 - May 15, 2019
 
 Removed internet connection error
