@@ -44,7 +44,8 @@ https://developer.yr.no/doc/GettingStarted/
 
 - `node index.js dev { <configuration-data> } eg:`
 
-- `node index.js dev '{ "authorization": { "apiKey": "" }, "applet": { "user": { "cityId": "http://www.yr.no/place/Netherlands/South_Holland/Zoetermeer/forecast.xml", "cityId_LABEL": "Zoetermeer, South Holland (Netherlands)", "units": "metric", "units_LABEL": "Metric" }, "defaults": {} }, "geometry": { "width": 4, "height": 1, "origin": { "x": 3, "y": 0 } }, "extensionId": "6f97a763-9ff3-42ab-8470-ef180d7fb128", "storageLocation": "/home/fred/.quio/v2/q_storage/extensions/6f97a763-9ff3-42ab-8470-ef180d7fb128" }'`
+- `node index.js dev '{ "authorization": { "apiKey": "" }, "applet": { "user": { "cityId": "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=52.060669&lon=4.494025", "cityId_LABEL": "Zoetermeer, South Holland (Netherlands)", "units": "metric", "units_LABEL": "Metric" }, "defaults": {} }, "geometry": { "width": 4, "height": 1, "origin": { "x": 3, "y": 0 } } }'`
+
 
 ## Contributions
 
