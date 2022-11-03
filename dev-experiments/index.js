@@ -143,6 +143,11 @@ function choosePeriod(day) {
 
     reader.on('close', () => {
       // remove duplicates, ignoring the header on first line
+      const withoutHeader = lines.slice(1);
+      const sorted = withoutHeader.sort();
+      const filtered = sorted.filter((line, i, allLines) => {
+        return (i == 0 || allLines[i - 1] != line);
+      });
       const dedupe = lines.slice(1).sort().filter((line, i, allLines) => {
         return (i == 0 || allLines[i - 1] != line);
       });
