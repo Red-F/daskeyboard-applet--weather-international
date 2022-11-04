@@ -52,7 +52,7 @@ Period.revive = function (json) {
   const details = json.data.instant.details;
   return new Period({
     from: new Date(json.time),
-    to: new Date(from.getTime() + 60 * 60 * 1000),
+    to: new Date(new Date(json.time).getTime() + 60 * 60 * 1000),
     symbol: next.summary.symbol_code,
     precipitation: next.details.precipitation_amount,
     windDirection: details.wind_from_direction,
